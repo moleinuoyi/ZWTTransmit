@@ -1,5 +1,6 @@
 package com.zwt.zwttransmit;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -16,7 +17,7 @@ public class LaunchActivity extends BaseActivity {
 
     @Override
     public void initAllDatum() {
-        internalHandler.sendEmptyMessageDelayed(KeyStore.KEY_SKIP_LUNCH_TO_MAIN, 800);
+        internalHandler.sendEmptyMessageDelayed(KeyStore.KEY_SKIP_LUNCH_TO_MAIN, 2000);
     }
 
     private final Handler internalHandler = new Handler(Looper.myLooper(), (@NonNull Message msg) ->{
@@ -31,4 +32,13 @@ public class LaunchActivity extends BaseActivity {
         return false;
     });
 
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_launch);
+
+        initAllViews();
+        initAllDatum();
+    }
 }
