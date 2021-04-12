@@ -17,12 +17,17 @@ import com.zwt.zwttransmit.broadcast.NetWorkChangReceiver;
 import com.zwt.zwttransmit.databinding.ActivityMainBinding;
 import com.zwt.zwttransmit.manager.WifiChangeManager;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class MainActivity extends BaseActivity {
     // ViewBinding 绑定
     ActivityMainBinding inflate;
     NetWorkChangReceiver networkChangeReceiver;
     WifiChangeManager.WifiIconCallBack wifiCallBack = this::changWifiPicture;
+    //定时器
+    Timer timer;
 
     @Override
     public void initAllViews() {
@@ -51,6 +56,25 @@ public class MainActivity extends BaseActivity {
 
         initAllDatum();
         initAllViews();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                MainActivity.this.runOnUiThread(() -> WifiChangeManager.getInstance().WifiIconChange(MainActivity.this));
+            }
+        };
+        timer.schedule(task, 0, 2000);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        timer.cancel();
     }
 
     @Override

@@ -60,7 +60,6 @@ public class WifiChangeManager {
         if (Build.VERSION.SDK_INT>=23){
             NetworkCapabilities networkCapabilities = connectMgr.getNetworkCapabilities(connectMgr.getActiveNetwork());
             if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)){
-                Log.d("zzz","wifi可用");
                 return NetworkSignalStrength(context);
             }else {
                 return WifiChangeManager.NET_NO_CONNECT;
@@ -95,6 +94,6 @@ public class WifiChangeManager {
     }
 
     public interface WifiIconCallBack{
-        public void changeWifiIcon(int wifiStatusCode);
+        void changeWifiIcon(int wifiStatusCode);
     }
 }
