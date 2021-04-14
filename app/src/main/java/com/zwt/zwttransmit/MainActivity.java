@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.view.GravityCompat;
 
+import com.zwt.zwttransmit.activity.IndexInterfaceActivity;
 import com.zwt.zwttransmit.broadcast.NetWorkChangReceiver;
 import com.zwt.zwttransmit.databinding.ActivityMainBinding;
 import com.zwt.zwttransmit.manager.WifiChangeManager;
@@ -98,7 +99,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 viewBinding.mainDrawerlayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.toolbar_saoyisao:
-
+                IndexInterfaceActivity.actionStart(this);
                 break;
             default:
                 break;

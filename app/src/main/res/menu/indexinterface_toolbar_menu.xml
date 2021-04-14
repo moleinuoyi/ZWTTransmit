@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/toolbar_delete"
+        android:title="Delete"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/toolbar_settings1"
+        android:title="Settings"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/toolbar_settings2"
+        android:title="Settings"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/toolbar_settings3"
+        android:title="Settings"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/toolbar_settings4"
+        android:title="Settings"
+        app:showAsAction="never"/>
+</menu>
