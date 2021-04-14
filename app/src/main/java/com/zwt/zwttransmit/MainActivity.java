@@ -21,9 +21,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity<ActivityMainBinding> {
     // ViewBinding 绑定
-    ActivityMainBinding inflate;
     NetWorkChangReceiver networkChangeReceiver;
     WifiChangeManager.WifiIconCallBack wifiCallBack = this::changWifiPicture;
     //定时器
@@ -32,7 +31,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void initAllViews() {
         // 设置自定义工具栏
-        setSupportActionBar(inflate.mainToolbar);
+        setSupportActionBar(viewBinding.mainToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             //设置Toolbar home键可点击
@@ -51,8 +50,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        inflate = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(inflate.getRoot());
 
         initAllDatum();
         initAllViews();
@@ -98,7 +95,7 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                inflate.mainDrawerlayout.openDrawer(GravityCompat.START);
+                viewBinding.mainDrawerlayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.toolbar_saoyisao:
 
@@ -127,19 +124,19 @@ public class MainActivity extends BaseActivity {
     private void changWifiPicture(int wifiCode){
         switch (wifiCode){
             case WifiChangeManager.NET_NO_CONNECT:
-                inflate.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_no_wifi));
+                viewBinding.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_no_wifi));
                 break;
             case WifiChangeManager.NET_WIFI_MAX:
-                inflate.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_wifi_4));
+                viewBinding.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_wifi_4));
                 break;
             case WifiChangeManager.NET_WIFI_ABOVE:
-                inflate.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_wifi_3));
+                viewBinding.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_wifi_3));
                 break;
             case WifiChangeManager.NET_WIFI_MIDDLE:
-                inflate.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_wifi_2));
+                viewBinding.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_wifi_2));
                 break;
             case WifiChangeManager.NET_WIFI_MIN:
-                inflate.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_wifi_1));
+                viewBinding.ivWifi.setImageDrawable(getResources().getDrawable(R.drawable.ic_wifi_1));
                 break;
             default:
                 break;

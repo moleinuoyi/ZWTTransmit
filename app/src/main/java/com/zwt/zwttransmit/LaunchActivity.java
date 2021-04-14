@@ -8,8 +8,9 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 
 import com.zwt.zwttransmit.common.KeyStore;
+import com.zwt.zwttransmit.databinding.ActivityLaunchBinding;
 
-public class LaunchActivity extends BaseActivity {
+public class LaunchActivity extends BaseActivity<ActivityLaunchBinding> {
     @Override
     public void initAllViews() {
 
