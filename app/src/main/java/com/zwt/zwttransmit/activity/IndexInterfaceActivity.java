@@ -3,16 +3,23 @@ package com.zwt.zwttransmit.activity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.zwt.zwttransmit.BaseActivity;
 import com.zwt.zwttransmit.R;
@@ -83,7 +90,12 @@ public class IndexInterfaceActivity extends BaseActivity<ActivityIndexInterfaceB
 
     @Override
     public void initAllDatum() {
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.d("zzz", "动态授权");
+            checkAuthority();
+        }else {
+            Log.d("zzz", "静态态授权");
+        }
     }
 
     @Override
@@ -121,5 +133,42 @@ public class IndexInterfaceActivity extends BaseActivity<ActivityIndexInterfaceB
     public static void actionStart(Context context){
         Intent intent = new Intent(context, IndexInterfaceActivity.class);
         context.startActivity(intent);
+    }
+
+    private void checkAuthority(){
+
+        int hasWritePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int hasReadPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        List<String> permissions = new ArrayList<String>();
+        if (hasWritePermission != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        if (hasReadPermission != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
+        if (!permissions.isEmpty()) {
+            ActivityCompat.requestPermissions(this, permissions.toArray(new String[permissions.size()]), 1);
+        }else {
+            Log.d("zzz", "已经授权");
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.d("zzz", "授权成功");
+                }else {
+                    Toast.makeText(this, "缺失必要权限"+grantResults.length+"::"+grantResults[0], Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
