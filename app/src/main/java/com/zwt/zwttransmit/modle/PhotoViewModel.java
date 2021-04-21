@@ -73,7 +73,8 @@ public class PhotoViewModel extends ViewModel {
                 Photo photo = new Photo(date, thumbPath, filepath, f.getName());
                 photoList.add(photo);
             }
-            photoMap.put(photoList.get(0).getDate(), photoList);
+            if (lastDate != 0)
+                photoMap.put(photoList.get(0).getDate(), photoList);
 
             //setValue()只能在主线程中调用，postValue()可以在任何线程中调用
             photoLiveData.postValue(photoMap);
