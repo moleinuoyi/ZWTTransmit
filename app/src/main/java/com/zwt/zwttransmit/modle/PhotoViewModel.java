@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.zwt.zwttransmit.MyApplication;
+import com.zwt.zwttransmit.utils.TimeUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -64,9 +65,9 @@ public class PhotoViewModel extends ViewModel {
                 String thumbPath = cursor.getString(thumbPathIndex);
                 long date = cursor.getLong(timeIndex);
                 String filepath = cursor.getString(pathIndex);
-                if (!getDate(lastDate).equals(getDate(date))) { //如果日期不同
+                if (!TimeUtils.getDate(lastDate).equals(TimeUtils.getDate(date))) { //如果日期不同
                     lastDate = date;
-                    photoMap.put(photoList.get(0).getDate(), photoList);
+                    photoMap.put(TimeUtils.getDate(photoList.get(0).getTime()), photoList);
                     photoList = new ArrayList<>();
                 }
                 File f = new File(filepath);
@@ -74,7 +75,7 @@ public class PhotoViewModel extends ViewModel {
                 photoList.add(photo);
             }
             if (lastDate != 0)
-                photoMap.put(photoList.get(0).getDate(), photoList);
+                photoMap.put(TimeUtils.getDate(photoList.get(0).getTime()), photoList);
 
             //setValue()只能在主线程中调用，postValue()可以在任何线程中调用
             photoLiveData.postValue(photoMap);
@@ -88,8 +89,4 @@ public class PhotoViewModel extends ViewModel {
         // 释放资源
     }
 
-    private String getDate(long time) {
-        return new SimpleDateFormat("yyyy年MM月dd日", Locale.getDefault())
-                .format(new Date(time*1000L));
-    }
 }

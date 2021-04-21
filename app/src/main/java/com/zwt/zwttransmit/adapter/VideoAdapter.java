@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.zwt.zwttransmit.R;
 import com.zwt.zwttransmit.modle.Photo;
 import com.zwt.zwttransmit.modle.Video;
+import com.zwt.zwttransmit.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder>{
 
             Glide.with(context).load(media.getFrameAtTime()).into(holder.imageView);
 //            Glide.with(context).load(video.getThumbnailData()).into(holder.imageView);
-            holder.textViewInformation.setText(video.getSize()+"  |  "+video.getDateMinute());
+            holder.textViewInformation.setText(video.getSize()+"  |  "+ TimeUtils.getDateMinute(video.getTime()));
         }
 
         @Override

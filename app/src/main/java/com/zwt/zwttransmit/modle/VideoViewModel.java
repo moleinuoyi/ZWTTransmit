@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.zwt.zwttransmit.MyApplication;
+import com.zwt.zwttransmit.utils.TimeUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,9 +74,9 @@ public class VideoViewModel extends ViewModel {
                 String sizeStr = String.valueOf(size / 1024f / 1024f).substring(0, 4) + "MB";
 
                 String thumbnailData = getThumbnailData(id);
-                if (!getDate(lastDate).equals(getDate(time))){
+                if (!TimeUtils.getDate(lastDate).equals(TimeUtils.getDate(time))){
                     lastDate = time;
-                    videoMap.put(videoList.get(0).getDate(), videoList);
+                    videoMap.put(TimeUtils.getDate(videoList.get(0).getTime()), videoList);
                     videoList = new ArrayList<>();
                 }
                 Video video = new Video(name, path, sizeStr, duration, time, mimeType, thumbnailData);
@@ -83,7 +84,7 @@ public class VideoViewModel extends ViewModel {
 
             }
             if (lastDate != 0)
-                videoMap.put(videoList.get(0).getDate(), videoList);
+                videoMap.put(TimeUtils.getDate(videoList.get(0).getTime()), videoList);
 
             videoLiveData.postValue(videoMap);
             cursor.close();
@@ -110,9 +111,5 @@ public class VideoViewModel extends ViewModel {
         }
         cur.close();
         return thumbnailData;
-    }
-    public String getDate(long time) {
-        return new SimpleDateFormat("yyyy年MM月dd日", Locale.getDefault())
-                .format(new Date(time*1000L));
     }
 }

@@ -11,12 +11,6 @@ public class Photo {
     private String filePath;
     private String fileName;
 
-
-    public String getDate() {
-        return new SimpleDateFormat("yyyy年MM月dd日", Locale.getDefault())
-                .format(new Date(time*1000L));
-    }
-
     public Photo(long time, String thumbPath, String filePath, String fileName) {
         this.time = time;
         this.thumbPath = thumbPath;

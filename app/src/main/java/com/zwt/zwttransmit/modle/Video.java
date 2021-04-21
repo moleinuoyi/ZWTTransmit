@@ -20,15 +20,6 @@ public class Video {
     // 视屏缩略图
     private String thumbnailData;
 
-    public String getDate() {
-        return new SimpleDateFormat("yyyy年MM月dd日", Locale.getDefault())
-                .format(new Date(time*1000L));
-    }
-    public String getDateMinute() {
-        return new SimpleDateFormat("yyyy/MM/dd a hh:mm:ss", Locale.getDefault())
-                .format(new Date(time*1000L));
-    }
-
     public Video(){}
 
     public Video(String name, String path, String size, int duration, long time, String mimeType, String thumbnailData) {
