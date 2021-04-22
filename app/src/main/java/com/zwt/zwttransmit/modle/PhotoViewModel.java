@@ -67,7 +67,7 @@ public class PhotoViewModel extends ViewModel {
                 String filepath = cursor.getString(pathIndex);
                 if (!TimeUtils.getDate(lastDate).equals(TimeUtils.getDate(date))) { //如果日期不同
                     lastDate = date;
-                    photoMap.put(TimeUtils.getDate(photoList.get(0).getTime()), photoList);
+                    photoMap.put(TimeUtils.getDateAdvanced(photoList.get(0).getTime()), photoList);
                     photoList = new ArrayList<>();
                 }
                 File f = new File(filepath);
@@ -75,7 +75,7 @@ public class PhotoViewModel extends ViewModel {
                 photoList.add(photo);
             }
             if (lastDate != 0)
-                photoMap.put(TimeUtils.getDate(photoList.get(0).getTime()), photoList);
+                photoMap.put(TimeUtils.getDateAdvanced(photoList.get(0).getTime()), photoList);
 
             //setValue()只能在主线程中调用，postValue()可以在任何线程中调用
             photoLiveData.postValue(photoMap);

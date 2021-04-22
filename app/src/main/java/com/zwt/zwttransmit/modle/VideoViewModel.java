@@ -76,7 +76,7 @@ public class VideoViewModel extends ViewModel {
                 String thumbnailData = getThumbnailData(id);
                 if (!TimeUtils.getDate(lastDate).equals(TimeUtils.getDate(time))){
                     lastDate = time;
-                    videoMap.put(TimeUtils.getDate(videoList.get(0).getTime()), videoList);
+                    videoMap.put(TimeUtils.getDateAdvanced(videoList.get(0).getTime()), videoList);
                     videoList = new ArrayList<>();
                 }
                 Video video = new Video(name, path, sizeStr, duration, time, mimeType, thumbnailData);
@@ -84,7 +84,7 @@ public class VideoViewModel extends ViewModel {
 
             }
             if (lastDate != 0)
-                videoMap.put(TimeUtils.getDate(videoList.get(0).getTime()), videoList);
+                videoMap.put(TimeUtils.getDateAdvanced(videoList.get(0).getTime()), videoList);
 
             videoLiveData.postValue(videoMap);
             cursor.close();
