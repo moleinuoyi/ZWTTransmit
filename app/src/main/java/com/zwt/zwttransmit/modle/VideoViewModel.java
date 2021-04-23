@@ -10,11 +10,10 @@ import androidx.lifecycle.ViewModel;
 import com.zwt.zwttransmit.MyApplication;
 import com.zwt.zwttransmit.utils.TimeUtils;
 
-import java.text.SimpleDateFormat;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class VideoViewModel extends ViewModel {
@@ -34,7 +33,7 @@ public class VideoViewModel extends ViewModel {
 
     public MutableLiveData<Map<String, ArrayList<Video>>> getMusicLiveData(){
         if (videoLiveData == null){
-            videoLiveData = new MutableLiveData<Map<String, ArrayList<Video>>>();
+            videoLiveData = new MutableLiveData<>();
             loadVideo();
         }
         return videoLiveData;
@@ -42,6 +41,10 @@ public class VideoViewModel extends ViewModel {
 
     private void loadVideo(){
         new Thread(() -> {
+            DecimalFormat df = new DecimalFormat("0.00");
+
+            df.setRoundingMode(RoundingMode.HALF_UP);
+
             @SuppressLint("Recycle")
             Cursor cursor = MyApplication.getContext().getContentResolver().query(
                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
@@ -70,8 +73,17 @@ public class VideoViewModel extends ViewModel {
                 int duration = cursor.getInt(durationIndex);
                 long time = cursor.getLong(timeIndex);
                 String mimeType = cursor.getString(mimeTypeIndex);
+                String sizeStr;
                 // 计算大小
-                String sizeStr = String.valueOf(size / 1024f / 1024f).substring(0, 4) + "MB";
+                if (size < 1024f){
+                    sizeStr = df.format(size) + "B";
+                }else if ((size/1024f) < 1024f){
+                    sizeStr = df.format(size / 1024f) + "kB";
+                }else if ((size/1024f/1024f) < 1024f){
+                    sizeStr = df.format(size / 1024f / 1024f) + "MB";
+                }else {
+                    sizeStr = df.format(size / 1024f / 1024f / 1024f) + "GB";
+                }
 
                 String thumbnailData = getThumbnailData(id);
                 if (!TimeUtils.getDate(lastDate).equals(TimeUtils.getDate(time))){
@@ -109,6 +121,7 @@ public class VideoViewModel extends ViewModel {
         if (cur != null && cur.moveToFirst()) {
             thumbnailData = cur.getString(cur.getColumnIndex(MediaStore.Video.Thumbnails.DATA));
         }
+        assert cur != null;
         cur.close();
         return thumbnailData;
     }
