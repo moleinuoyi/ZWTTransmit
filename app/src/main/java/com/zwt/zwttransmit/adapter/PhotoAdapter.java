@@ -51,7 +51,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
 
             holder.recyclerView.setAdapter(new PhotoAdapter.ChildAdapter(list));
         }else {
-
+            childAdapter.setData(list);
             childAdapter.notifyDataSetChanged();
         }
     }
