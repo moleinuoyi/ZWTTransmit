@@ -1,9 +1,11 @@
 package com.zwt.zwttransmit.modle;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -31,12 +33,12 @@ public class MusicViewModel extends ViewModel {
     private MutableLiveData<Map<String, ArrayList<Music>>> musicLiveData;
 
     String[] STORE_IMAGES = {
+            MediaStore.Audio.Media._ID, //歌曲id,可以通过这个id获取到图片的路径
             MediaStore.Audio.Media.TITLE,//歌曲名
             MediaStore.Audio.Media.MIME_TYPE,//歌曲类型
             MediaStore.Audio.Media.ALBUM,//专辑
             MediaStore.Audio.Media.ALBUM_ID, //专辑图片地址
             MediaStore.Audio.Media.ARTIST,//作者
-            MediaStore.Audio.Media.DATA,//路径
             MediaStore.Audio.Media.DURATION,//时长
             MediaStore.Audio.Media.SIZE, // 大小
             MediaStore.Audio.Media.DATE_ADDED //放入数据库日期
@@ -63,10 +65,10 @@ public class MusicViewModel extends ViewModel {
                     null,
                     null,
                     null);
+            int idIndex = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
             int titleIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int albumIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
             int artistIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int dataIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
             int durationIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
             int sizeIndex = cursor.getColumnIndex(MediaStore.Audio.Media.SIZE);
             int timeIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED);
@@ -75,22 +77,24 @@ public class MusicViewModel extends ViewModel {
             int mimeTypeIndex = cursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE);
 
             while (cursor.moveToNext()){
+                long id = cursor.getLong(idIndex);
                 String title = cursor.getString(titleIndex);
                 String album = cursor.getString(albumIndex);
                 String artist = cursor.getString(artistIndex);
-                String path = cursor.getString(dataIndex);
                 int duration = cursor.getInt(durationIndex);
                 long size = cursor.getLong(sizeIndex);
                 long time = cursor.getLong(timeIndex);
                 int albumId = cursor.getInt(albumIdIndex);
                 String mimeType = cursor.getString(mimeTypeIndex);
 
+                String uriImage = Uri.withAppendedPath(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "" + id).toString();
+
                 if ("audio/mpeg".equals(mimeType.trim())) {
                     mimeType = "mp3";
                 } else if ("audio/x-ms-wma".equals(mimeType.trim())) {
                     mimeType = "wma";
                 }
-                String albumArt = getAlbumArt(albumId);
+                String albumArt = getAlbumArt(albumId, id);
                 String pinyin = getPinyin(title);
 
                 String sizeStr;
@@ -105,7 +109,7 @@ public class MusicViewModel extends ViewModel {
                     sizeStr = df.format(size / 1024f / 1024f / 1024f) + "GB";
                 }
 
-                Music music = new Music(title, path, album, albumArt, artist, sizeStr, duration, time, pinyin, mimeType);
+                Music music = new Music(title, uriImage, album, albumArt, artist, sizeStr, duration, time, pinyin, mimeType);
 
                 Objects.requireNonNull(musicMap.get(pinyin)).add(music);
             }
@@ -121,18 +125,16 @@ public class MusicViewModel extends ViewModel {
     }
 
     // 获得专辑图片
-    private String getAlbumArt(int album_id) {
-        String mUriAlbums = "content://media/external/audio/albums";
-        String[] projection = new String[]{"album_art"};
-        Cursor cur = MyApplication.getContext().getContentResolver().query(Uri.parse(mUriAlbums + "/" + Integer.toString(album_id)), projection, null, null, null);
-        String album_art = "";
-        if (cur.getCount() > 0 && cur.getColumnCount() > 0) {
-            cur.moveToNext();
-            album_art = cur.getString(0);
+    private String getAlbumArt(int album_id, long song_id) {
+        Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
+        if(album_id < 0){
+            return Uri.parse("content://media/external/audio/media/" + song_id + "/albumart").toString();
+        }else {
+            return ContentUris.withAppendedId(albumArtUri, album_id).toString();
         }
-        cur.close();
-        return album_art;
+
     }
+
 
     @Override
     protected void onCleared() {
