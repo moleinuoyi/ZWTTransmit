@@ -3,6 +3,7 @@ package com.zwt.zwttransmit.modle;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -27,9 +28,10 @@ public class PhotoViewModel extends ViewModel {
     private MutableLiveData<Map<String, ArrayList<Photo>>> photoLiveData;
 
     String[] STORE_IMAGES = {
-            MediaStore.Images.Media.DATA,
+            MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DATE_ADDED,
-            MediaStore.Images.Thumbnails.DATA
+            MediaStore.Images.Thumbnails.DATA,
+            MediaStore.Images.Media.DISPLAY_NAME
     };
 
     public MutableLiveData<Map<String, ArrayList<Photo>>> getPhotoLiveData() {
@@ -52,26 +54,28 @@ public class PhotoViewModel extends ViewModel {
                     null,
                     MediaStore.Images.Media.DATE_MODIFIED+" desc");
 
-
+            int idIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
             int thumbPathIndex = cursor.getColumnIndex(MediaStore.Images.Thumbnails.DATA);
             int timeIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED);
-            int pathIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+            int displyNameIndex = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
             long lastDate = 0;//获得第一个时间
 
             ArrayList<Photo> photoList = new ArrayList<>();
             while (cursor.moveToNext()){
                 if (lastDate == 0)
                     lastDate = cursor.getLong(timeIndex);
+
+                long id = cursor.getLong(idIndex);
                 String thumbPath = cursor.getString(thumbPathIndex);
                 long date = cursor.getLong(timeIndex);
-                String filepath = cursor.getString(pathIndex);
+                String filepath = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id).toString();
                 if (!TimeUtils.getDate(lastDate).equals(TimeUtils.getDate(date))) { //如果日期不同
                     lastDate = date;
                     photoMap.put(TimeUtils.getDateAdvanced(photoList.get(0).getTime()), photoList);
                     photoList = new ArrayList<>();
                 }
-                File f = new File(filepath);
-                Photo photo = new Photo(date, thumbPath, filepath, f.getName());
+                String filename = cursor.getString(displyNameIndex);
+                Photo photo = new Photo(date, thumbPath, filepath, filename);
                 photoList.add(photo);
             }
             if (lastDate != 0)
