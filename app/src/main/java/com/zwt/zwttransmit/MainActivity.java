@@ -8,11 +8,16 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.view.GravityCompat;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.zwt.zwttransmit.activity.CustomCaptureActivity;
 import com.zwt.zwttransmit.activity.IndexInterfaceActivity;
 import com.zwt.zwttransmit.broadcast.NetWorkChangReceiver;
 import com.zwt.zwttransmit.databinding.ActivityMainBinding;
@@ -99,12 +104,41 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 viewBinding.mainDrawerlayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.toolbar_saoyisao:
+                if (WifiChangeManager.getInstance().isWifiAvailable(this)){
+                    //创建Intentegrator对象
+                    IntentIntegrator intentIntegrator = new IntentIntegrator(MainActivity.this);
+                    //设置扫描后提示音
+                    intentIntegrator.setBeepEnabled(true);
+                    // 设置超时时间
+                    intentIntegrator.setTimeout(8000);
+                    // 自定义相机界面
+                    intentIntegrator.setCaptureActivity(CustomCaptureActivity.class);
+                    //开始扫描
+                    intentIntegrator.initiateScan();
+                }else {
+                    Toast.makeText(MainActivity.this, "请先打开wifi",Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.toolbar_delete:
                 IndexInterfaceActivity.actionStart(this);
                 break;
             default:
                 break;
         }
         return true;
+    }
+    // 扫一扫回掉
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result!=null){
+            if (result.getContents() == null){
+                Toast.makeText(this, "取消扫描", Toast.LENGTH_LONG).show();
+            }else {
+                Toast.makeText(this, "扫描内容："+result.getContents(), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
