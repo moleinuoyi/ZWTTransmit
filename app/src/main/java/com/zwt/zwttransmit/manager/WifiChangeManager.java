@@ -53,6 +53,12 @@ public class WifiChangeManager {
         }
     }
 
+    //判斷WiFi是否可用
+    public Boolean isWifiAvailable(Context context){
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        return wifiManager != null && wifiManager.isWifiEnabled();
+    }
+
     // 判断网路连接类型
     private int isNetworkAvailable(Context context) {
         ConnectivityManager connectMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
